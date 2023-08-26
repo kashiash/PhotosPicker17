@@ -10,14 +10,36 @@ import PhotosUI
 
 struct ContentView: View {
     @State private var selectedItem: PhotosPickerItem?
+    @State private var selectedImage: Image?
+
 
     var body: some View {
-        PhotosPicker(selection: $selectedItem, matching: .images) {
-            Label ("Wybrane zdjęcie",systemImage: "photo")
+        VStack{
+            if let selectedImage {
+                selectedImage
+                    .resizable()
+                    .scaledToFit()
+                    .padding(.horizontal, 10)
+            }
+            PhotosPicker(selection: $selectedItem, matching: .images) {
+                Label ("Wybrane zdjęcie",systemImage: "photo")
+            }
+            .onChange(of: selectedItem) { oldItem,  newItem in
+                Task {
+                    if let image = try? await newItem?.loadTransferable(type: Image.self) {
+                        selectedImage = image
+                    }
+                }
+            }
         }
+
+
+
     }
 }
 
-#Preview {
-    ContentView()
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
 }

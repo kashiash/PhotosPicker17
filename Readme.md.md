@@ -26,3 +26,36 @@ struct ContentView: View {
 ```
 
 Parametr matching pozwala określić typ zasobu do wyświetlenia. Tutaj wybieramy tylko wyświetlanie obrazów. W zamknięciu tworzymy prosty przycisk z widokiem Label.
+
+
+
+![2023-08-26_11-54-04 (1)](2023-08-26_11-54-04%20(1).gif)
+
+
+
+Po wybraniu zdjęcia, selektor automatycznie zamyka się, a wybrany element zdjęcia jest przechowywany w zmiennej selectedItem, która jest typu PhotosPickerItem. Aby wczytać obraz z tego elementu, możesz użyć metody loadTransferable(type:completionHandler:). Możesz również użyć modyfikatora onChange, aby nasłuchiwać aktualizacji zmiennej selectedItem. Za każdym razem, gdy zachodzi zmiana, wywołujesz metodę loadTransferable, aby wczytać dane zasobu, w ten sposób:
+
+```swift
+@State private var selectedImage: Image?
+
+// ...
+
+.onChange(of: selectedItem) { oldItem, newItem in
+    Task {
+        if let image = try? await newItem?.loadTransferable(type: Image.self) {
+            selectedImage = image
+        }
+    }
+}
+```
+
+Podczas korzystania z loadTransferable konieczne jest określenie typu zasobu do pobrania. W tym przypadku używamy typu Image, aby bezpośrednio wczytać obraz. Jeśli operacja zakończy się sukcesem, metoda zwróci widok Image, który można bezpośrednio użyć do wyświetlenia zdjęcia na ekranie.
+
+```swift
+if let selectedImage {
+    selectedImage
+        .resizable()
+        .scaledToFit()
+        .padding(.horizontal, 10)
+}
+```
