@@ -167,3 +167,13 @@ if selectedImages.isEmpty {
 ```
 
 Jeśli chcesz dowiedzieć się więcej na temat tworzenia karuzel obrazów, możesz sprawdzić ten samouczek. W iOS 17 wprowadzono nowy widok o nazwie ContentUnavailableView. Widok ten jest zalecany do użycia w scenariuszach, w których zawartość widoku nie może być wyświetlana. Dlatego, gdy nie jest wybrane żadne zdjęcie, używamy ContentUnavailableView, aby przedstawić zwięzłą i informacyjną wiadomość.
+
+
+
+![2023-08-26_16-05-18 (1)](2023-08-26_16-05-18%20(1).gif)
+
+
+
+### Podsumowanie
+
+W iOS 17 Apple wprowadziło ulepszenia w natywnym selektorze zdjęć (Photos picker). Teraz możesz łatwo osadzić go wewnątrz swojej aplikacji zamiast korzystać z osobnego panelu. Ten samouczek wyjaśnia nowe modyfikatory, które są dostępne w zaktualizowanym widoku PhotosPicker, i pokazuje, jak stworzyć wbudowany selektor zdjęć.
