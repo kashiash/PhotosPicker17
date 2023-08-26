@@ -16,7 +16,7 @@ struct ContentView: View {
     var body: some View {
         VStack{
             if selectedImages.isEmpty {
-                ContentUnavailableView("Brak zdjęć", systemImage: "photo.on.rectangle", description: Text("To get started, select some photosd below"))
+                ContentUnavailableView("Brak zdjęć", systemImage: "photo.on.rectangle", description: Text("wybierz jakieś z poniżej listy"))
                     .frame(height: 300)
             } else {
                 
@@ -26,9 +26,14 @@ struct ContentView: View {
                             selectedImages[index]
                                 .resizable()
                                 .scaledToFit()
-                                .padding(.horizontal, 10)
+                                .clipShape(RoundedRectangle(cornerRadius: /*@START_MENU_TOKEN@*/25.0/*@END_MENU_TOKEN@*/))
+                                .padding(.horizontal,20)
                                 .containerRelativeFrame(.horizontal)
-
+                                .scrollTransition(.animated ) { content , phase in
+                                    content
+                                        .opacity(phase.isIdentity ? 1.0 : 0.8)
+                                        .scaleEffect(phase.isIdentity ? 1.0 : 0.8)
+                                }
                         }
                     }
                 }
@@ -42,12 +47,6 @@ struct ContentView: View {
                             Label("Wybierz zdjęcie",systemImage: "photo")
                         }
 
-//            PhotosPicker(selection: $selectedItems,
-//                         maxSelectionCount: 5,
-//                         selectionBehavior: .continuousAndOrdered,
-//                         matching: .images) {
-//                Label("Select a photo", systemImage: "photo")
-//            }
                          .photosPickerStyle(.inline)
                          .photosPickerAccessoryVisibility(.hidden, edges: .bottom)
                          .frame(height: 300)

@@ -108,3 +108,62 @@ PhotosPicker(selection: $selectedItems,
 ```
 
 Jeśli chcesz ograniczyć liczbę elementów dostępnych do wyboru, możesz określić maksymalną ilość za pomocą parametru maxSelectionCount.
+
+Po tym, jak użytkownik wybierze zestaw zdjęć, zostaną one przechowywane w tablicy selectedItems. Tablica selectedItems została zmodyfikowana, aby pomieścić wiele elementów i jest teraz typu PhotosPickerItem.
+
+```swift
+@State private var selectedItems: [PhotosPickerItem] = []
+```
+
+Aby wczytać wybrane zdjęcia, możesz zaktualizować zamknięcie onChange w ten sposób:
+
+```swift
+.onChange(of: selectedItems) { oldItems, newItems in
+ 
+    selectedImages.removeAll()
+ 
+    newItems.forEach { newItem in
+ 
+        Task {
+            if let image = try? await newItem.loadTransferable(type: Image.self) {
+                selectedImages.append(image)
+            }
+        }
+ 
+    }
+}
+```
+
+Użyłem tablicy Image do przechowywania wczytanych obrazów.
+
+```swift
+@State private var selectedImages: [Image] = []
+```
+
+Aby wyświetlić wybrane obrazy, możesz użyć widoku poziomego przewijania (ScrollView). Oto przykładowy kod, który można umieścić na początku widoku VStack:
+
+```swift
+if selectedImages.isEmpty {
+    ContentUnavailableView("Brak Zdjęć", systemImage: "photo.on.rectangle", description: Text("Aby rozpocząć, wybierz zdjęcia poniżej"))
+        .frame(height: 300)
+} else {
+ 
+    ScrollView(.horizontal) {
+        LazyHStack {
+            ForEach(0..<selectedImages.count, id: \.self) { index in
+                selectedImages[index]
+                    .resizable()
+                    .scaledToFill()
+                    .frame(height: 250)
+                    .clipShape(RoundedRectangle(cornerRadius: 25.0))
+                    .padding(.horizontal, 20)
+                    .containerRelativeFrame(.horizontal)
+            }
+ 
+        }
+    }
+    .frame(height: 300)
+}
+```
+
+Jeśli chcesz dowiedzieć się więcej na temat tworzenia karuzel obrazów, możesz sprawdzić ten samouczek. W iOS 17 wprowadzono nowy widok o nazwie ContentUnavailableView. Widok ten jest zalecany do użycia w scenariuszach, w których zawartość widoku nie może być wyświetlana. Dlatego, gdy nie jest wybrane żadne zdjęcie, używamy ContentUnavailableView, aby przedstawić zwięzłą i informacyjną wiadomość.
