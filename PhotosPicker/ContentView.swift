@@ -9,35 +9,60 @@ import SwiftUI
 import PhotosUI
 
 struct ContentView: View {
-    @State private var selectedItem: PhotosPickerItem?
-    @State private var selectedImage: Image?
+    @State private var selectedItems: [PhotosPickerItem] = []
+    @State private var selectedImages: [Image] = []
 
 
     var body: some View {
         VStack{
-            if let selectedImage {
-                selectedImage
-                    .resizable()
-                    .scaledToFit()
-                    .padding(.horizontal, 10)
-            }
-            PhotosPicker(selection: $selectedItem, matching: .images) {
-                Label ("Wybierz zdjęcie",systemImage: "photo")
-            }
-            .photosPickerStyle(.inline)
-            .photosPickerAccessoryVisibility(.hidden, edges: .bottom)
-            .frame(height: 300)
-            .ignoresSafeArea()
+            if selectedImages.isEmpty {
+                ContentUnavailableView("Brak zdjęć", systemImage: "photo.on.rectangle", description: Text("To get started, select some photosd below"))
+                    .frame(height: 300)
+            } else {
+                
+                ScrollView(.horizontal){
+                    LazyHStack{
+                        ForEach(0..<selectedImages.count, id: \.self) { index in
+                            selectedImages[index]
+                                .resizable()
+                                .scaledToFit()
+                                .padding(.horizontal, 10)
+                                .containerRelativeFrame(.horizontal)
 
-            .onChange(of: selectedItem) { oldItem,  newItem in
-                Task {
-                    if let image = try? await
-                        newItem?.loadTransferable(type: Image.self) {
-                        selectedImage = image
-                        
+                        }
                     }
                 }
+                .scrollTargetBehavior(.paging)
             }
+
+                        PhotosPicker(selection: $selectedItems,
+                                     maxSelectionCount: 5,
+                                     selectionBehavior: .continuousAndOrdered,
+                                     matching: .images) {
+                            Label("Wybierz zdjęcie",systemImage: "photo")
+                        }
+
+//            PhotosPicker(selection: $selectedItems,
+//                         maxSelectionCount: 5,
+//                         selectionBehavior: .continuousAndOrdered,
+//                         matching: .images) {
+//                Label("Select a photo", systemImage: "photo")
+//            }
+                         .photosPickerStyle(.inline)
+                         .photosPickerAccessoryVisibility(.hidden, edges: .bottom)
+                         .frame(height: 300)
+                         .ignoresSafeArea()
+                         .onChange(of: selectedItems) { oldItems,  newItems in
+                             selectedImages.removeAll()
+                             newItems.forEach { newItem in
+                                 Task {
+                                     if let image = try? await
+                                            newItem.loadTransferable(type: Image.self) {
+                                         selectedImages.append(image)
+                                     }
+                                 }
+                             }
+                         }
 
         }
 
