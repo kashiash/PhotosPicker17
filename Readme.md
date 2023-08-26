@@ -59,3 +59,52 @@ if let selectedImage {
         .padding(.horizontal, 10)
 }
 ```
+
+![2023-08-26_12-51-07 (1)](2023-08-26_12-51-07%20(1).gif)
+
+### Implementacja wbudowanego selektora zdjęć (PhotosPicker)
+
+Teraz, gdy już rozumiesz, jak pracować z PhotosPicker, zobaczmy, jak go osadzić w naszej aplikacji demonstracyjnej. To, co zamierzamy zrobić, to zastąpić przycisk "Wybierz zdjęcie" wbudowanym selektorem zdjęć. Zaktualizowana wersja PhotosPicker zawiera nowy modyfikator o nazwie photosPickerStyle. Poprzez ustawienie wartości .inline, selektor zdjęć zostanie automatycznie osadzony w aplikacji:
+
+```swift
+.photosPickerStyle(.inline)
+```
+
+Możesz również używać standardowych modyfikatorów, takich jak .frame i .padding, aby dostosować rozmiar selektora.
+
+
+
+![2023-08-26_13-02-23 (1)](2023-08-26_13-02-23%20(1).gif)
+
+
+
+Domyślnie, w górnym dodatku selektora jest pasek nawigacji, a w dolnym paskiem narzędzi. Aby wyłączyć oba paski, możesz zastosować modyfikator photosPickerAccessoryVisibility:
+
+```swift
+.photosPickerAccessoryVisibility(.hidden)
+```
+
+Opcjonalnie, możesz ukryć jeden z nich, np. dolny pasek:
+
+```swift
+.photosPickerAccessoryVisibility(.hidden, edges: .bottom)
+```
+
+
+
+
+
+### Obsługa Wyboru Wielu Zdjęć
+
+Obecnie selektor Photos pozwala użytkownikom wybrać tylko pojedyncze zdjęcie. Aby umożliwić wybór wielu zdjęć, możesz włączyć zachowanie ciągłego wyboru, ustawiając selectionBehavior na .continuous lub .continuousAndOrdered:
+
+```swift
+PhotosPicker(selection: $selectedItems, 
+             maxSelectionCount: 5, 
+             selectionBehavior: .continuousAndOrdered,
+             matching: .images) {
+    Label("Wybierz zdjęcie", systemImage: "photo")
+}
+```
+
+Jeśli chcesz ograniczyć liczbę elementów dostępnych do wyboru, możesz określić maksymalną ilość za pomocą parametru maxSelectionCount.

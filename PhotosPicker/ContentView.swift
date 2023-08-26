@@ -22,15 +22,23 @@ struct ContentView: View {
                     .padding(.horizontal, 10)
             }
             PhotosPicker(selection: $selectedItem, matching: .images) {
-                Label ("Wybrane zdjęcie",systemImage: "photo")
+                Label ("Wybierz zdjęcie",systemImage: "photo")
             }
+            .photosPickerStyle(.inline)
+            .photosPickerAccessoryVisibility(.hidden, edges: .bottom)
+            .frame(height: 300)
+            .ignoresSafeArea()
+
             .onChange(of: selectedItem) { oldItem,  newItem in
                 Task {
-                    if let image = try? await newItem?.loadTransferable(type: Image.self) {
+                    if let image = try? await
+                        newItem?.loadTransferable(type: Image.self) {
                         selectedImage = image
+                        
                     }
                 }
             }
+
         }
 
 
